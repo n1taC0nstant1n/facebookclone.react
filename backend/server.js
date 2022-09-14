@@ -1,12 +1,16 @@
 const express = require("express");
 const cors = require("cors");
-const { request } = require("express");
+const { readdirSync } = require("fs");
+const dotenv = require("dotenv");
+dotenv.config();
+
 const app = express();
-// const options = {
-//   origin: "http://localhost:3000",
-//   useSuccessStatus: 200,
-// };
+
 app.use(cors());
+const userRoutes = require("./routes/user");
+
+app.use("/", userRoutes);
+readdirSync("./routes").map((r) => app.use("/", require("./routes/" + r)));
 
 app.get("/", (req, res) => {
   res.send("Welcome from home");
@@ -14,6 +18,8 @@ app.get("/", (req, res) => {
 app.get("/books", (req, res) => {
   res.send("Welcome from books!!!! yay");
 });
-app.listen(8000, () => {
-  console.log("Server is listening...");
+
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+  console.log(`Server is running on PORT: ${PORT}`);
 });
